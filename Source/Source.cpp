@@ -3,9 +3,19 @@
 
 int main()
 {
-	Graph<5> graph(30, 0.1f);
-	graph.printVertices();
+	Logger::SetOutput(LogOutput::TO_FILE);
+	Logger::SetFilename("dane.txt");
 
+	Graph<2>::logHeaders();
+
+	// 2-dimensional graph with 50 vertices and 0.5 probability of
+	// edge between any two vertices.
+	Graph<2> graph(50, 0.5);
+	graph.logProperties();
+
+	Logger::CloseStream();
+
+	std::cout << "Ready.";
 	std::cin.get();
 
 	return 0;
