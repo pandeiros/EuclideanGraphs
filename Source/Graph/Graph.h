@@ -49,31 +49,31 @@ private:
 template<unsigned int Dimensions>
 void Graph<Dimensions>::logHeaders()
 {
-	LOG_SEP_DEFAULT("Dimensions");
-	LOG_SEP_DEFAULT("Vertices");
-	LOG_SEP_DEFAULT("Edge probability");
-	LOG_SEP_DEFAULT("Connected?");
-	LOG_SEP_DEFAULT("Average degree");
-	LOG_SEP_DEFAULT("Expected value of degree");
-	LOG_SEP_DEFAULT("Edges");
-	LOG_SEP_DEFAULT("Expected value of edge count");
-	LOG_SEP_DEFAULT("Density");
-	LOG_SEP_DEFAULT("Average density");
-	LOG_SEP_DEFAULT("Average path length");
-	LOG_SEP_DEFAULT("Grouping factor");
+	LOG_DELIMITED_DEFAULT("Dimensions");
+	LOG_DELIMITED_DEFAULT("Vertices");
+	LOG_DELIMITED_DEFAULT("Edge probability");
+	LOG_DELIMITED_DEFAULT("Connected?");
+	LOG_DELIMITED_DEFAULT("Average degree");
+	LOG_DELIMITED_DEFAULT("Expected value of degree");
+	LOG_DELIMITED_DEFAULT("Edges");
+	LOG_DELIMITED_DEFAULT("Expected value of edge count");
+	LOG_DELIMITED_DEFAULT("Density");
+	LOG_DELIMITED_DEFAULT("Average density");
+	LOG_DELIMITED_DEFAULT("Average path length");
+	LOG_DELIMITED_DEFAULT("Grouping factor");
 
-	//LOG_SEP_DEFAULT("Wymiary");
-	//LOG_SEP_DEFAULT("Wierzchołki");
-	//LOG_SEP_DEFAULT("Prawdopodobieństwo krawędzi");
-	//LOG_SEP_DEFAULT("Spójny");
-	//LOG_SEP_DEFAULT("Średni stopień wierzchołka");
-	//LOG_SEP_DEFAULT("Wartość oczekiwana stopnia wierzchołka");
-	//LOG_SEP_DEFAULT("Krawędzie");
-	//LOG_SEP_DEFAULT("Wartość oczekiwana liczby krawędzi");
-	//LOG_SEP_DEFAULT("Gęstość");
-	//LOG_SEP_DEFAULT("Średnia gęstość");
-	//LOG_SEP_DEFAULT("Średnia długość ścieżki");
-	//LOG_SEP_DEFAULT("Współczynnik grupowania");
+	//LOG_DELIMITED_DEFAULT("Wymiary");
+	//LOG_DELIMITED_DEFAULT("Wierzchołki");
+	//LOG_DELIMITED_DEFAULT("Prawdopodobieństwo krawędzi");
+	//LOG_DELIMITED_DEFAULT("Spójny");
+	//LOG_DELIMITED_DEFAULT("Średni stopień wierzchołka");
+	//LOG_DELIMITED_DEFAULT("Wartość oczekiwana stopnia wierzchołka");
+	//LOG_DELIMITED_DEFAULT("Krawędzie");
+	//LOG_DELIMITED_DEFAULT("Wartość oczekiwana liczby krawędzi");
+	//LOG_DELIMITED_DEFAULT("Gęstość");
+	//LOG_DELIMITED_DEFAULT("Średnia gęstość");
+	//LOG_DELIMITED_DEFAULT("Średnia długość ścieżki");
+	//LOG_DELIMITED_DEFAULT("Współczynnik grupowania");
 
 	LOG("");
 }
@@ -81,18 +81,18 @@ void Graph<Dimensions>::logHeaders()
 template<unsigned int Dimensions>
 void Graph<Dimensions>::logProperties() const
 {
-	LOG_SEP_DEFAULT(dimensions);
-	LOG_SEP_DEFAULT(n);
-	LOG_SEP_DEFAULT(xi);
-	LOG_SEP_DEFAULT(exactProperties.isConnected ? "yes" : "no");
-	LOG_SEP_DEFAULT(exactProperties.averageDegree);
-	LOG_SEP_DEFAULT(approximateProperties.expectedValueOfDegree);
-	LOG_SEP_DEFAULT(exactProperties.edgeCount);
-	LOG_SEP_DEFAULT(approximateProperties.expectedValueOfEdgeCount);
-	LOG_SEP_DEFAULT(exactProperties.density);
-	LOG_SEP_DEFAULT(approximateProperties.averageDensity);
-	LOG_SEP_DEFAULT(exactProperties.averagePathLength);
-	LOG_SEP_DEFAULT(exactProperties.groupingFactor);
+	LOG_DELIMITED_DEFAULT(dimensions);
+	LOG_DELIMITED_DEFAULT(n);
+	LOG_DELIMITED_DEFAULT(xi);
+	LOG_DELIMITED_DEFAULT(exactProperties.isConnected ? "yes" : "no");
+	LOG_DELIMITED_DEFAULT(exactProperties.averageDegree);
+	LOG_DELIMITED_DEFAULT(approximateProperties.expectedValueOfDegree);
+	LOG_DELIMITED_DEFAULT(exactProperties.edgeCount);
+	LOG_DELIMITED_DEFAULT(approximateProperties.expectedValueOfEdgeCount);
+	LOG_DELIMITED_DEFAULT(exactProperties.density);
+	LOG_DELIMITED_DEFAULT(approximateProperties.averageDensity);
+	LOG_DELIMITED_DEFAULT(exactProperties.averagePathLength);
+	LOG_DELIMITED_DEFAULT(exactProperties.groupingFactor);
 	LOG("");
 }
 

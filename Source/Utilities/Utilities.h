@@ -1,9 +1,9 @@
 #pragma once
 
-#define DEFAULT_SEPARATOR ";"
+#define DEFAULT_DELIMITER ";"
 #define LOG(TEXT) Logger::Log(TEXT)
-#define LOG_SEP(TEXT, SEPARATOR) Logger::Log(TEXT, false); Logger::Log(SEPARATOR, false)
-#define LOG_SEP_DEFAULT(TEXT) LOG_SEP(TEXT, DEFAULT_SEPARATOR)
+#define LOG_DELIMITED(TEXT, DELIMITER) Logger::Log(TEXT, false); Logger::Log(DELIMITER, false)
+#define LOG_DELIMITED_DEFAULT(TEXT) LOG_DELIMITED(TEXT, DEFAULT_DELIMITER)
 
 #include "Utilities/Utilities.h"
 #include <string>

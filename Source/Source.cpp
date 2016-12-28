@@ -11,6 +11,8 @@ int main()
 	// 2-dimensional graph with 50 vertices and 0.5 probability of
 	// edge between any two vertices.
 	Graph<2> graph(50, 0.5);
+
+	// Log properties to output set in Logger.
 	graph.logProperties();
 
 	Logger::CloseStream();
