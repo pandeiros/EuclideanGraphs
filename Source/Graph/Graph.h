@@ -11,6 +11,11 @@ template<unsigned int Dimensions>
 class Graph
 {
 public:
+	Graph()
+	{
+
+	};
+
 	Graph(const unsigned int vertexCount, const double xi)
 		: n(vertexCount), xi(xi)
 	{
@@ -23,12 +28,23 @@ public:
 
 		calculateExactProperties();
 		calculateAppropximateProperties();
-	}
+	};
 
 	void printVertices() const;
 	void printProperties() const;
 	void logProperties() const;
 	static void logHeaders();
+
+	unsigned int getDimensions() const;
+	unsigned int getVerticesCount() const;
+	double getEdgeProbability() const;
+	ApproximateProperties getApproximateProperties() const;
+	ExactProperties getExactProperties() const;
+
+protected:
+	const unsigned int dimensions = Dimensions;
+	unsigned int n = 0;
+	double xi = 0.0;
 
 private:
 	void calculateExactProperties();
@@ -37,14 +53,40 @@ private:
 	void visitNode(std::vector<unsigned int> & indexes, unsigned int index);
 	std::vector<unsigned int> breadthFirstSearch(unsigned int rootIndex);
 
-	const unsigned int dimensions = Dimensions;
-	unsigned int n = 0;
-	double xi = 0.0;
 	std::vector<Vertex<Dimensions>> vertices;
-
 	ApproximateProperties approximateProperties;
 	ExactProperties exactProperties;
 };
+
+template<unsigned int Dimensions>
+ExactProperties Graph<Dimensions>::getExactProperties() const
+{
+	return exactProperties;
+}
+
+template<unsigned int Dimensions>
+ApproximateProperties Graph<Dimensions>::getApproximateProperties() const
+{
+	return approximateProperties;
+}
+
+template<unsigned int Dimensions>
+double Graph<Dimensions>::getEdgeProbability() const
+{
+	return xi;
+}
+
+template<unsigned int Dimensions>
+unsigned int Graph<Dimensions>::getVerticesCount() const
+{
+	return n;
+}
+
+template<unsigned int Dimensions>
+unsigned int Graph<Dimensions>::getDimensions() const
+{
+	return dimensions;
+}
 
 template<unsigned int Dimensions>
 void Graph<Dimensions>::logHeaders()
@@ -61,19 +103,6 @@ void Graph<Dimensions>::logHeaders()
 	LOG_DELIMITED_DEFAULT("Average density");
 	LOG_DELIMITED_DEFAULT("Average path length");
 	LOG_DELIMITED_DEFAULT("Grouping factor");
-
-	//LOG_DELIMITED_DEFAULT("Wymiary");
-	//LOG_DELIMITED_DEFAULT("Wierzchołki");
-	//LOG_DELIMITED_DEFAULT("Prawdopodobieństwo krawędzi");
-	//LOG_DELIMITED_DEFAULT("Spójny");
-	//LOG_DELIMITED_DEFAULT("Średni stopień wierzchołka");
-	//LOG_DELIMITED_DEFAULT("Wartość oczekiwana stopnia wierzchołka");
-	//LOG_DELIMITED_DEFAULT("Krawędzie");
-	//LOG_DELIMITED_DEFAULT("Wartość oczekiwana liczby krawędzi");
-	//LOG_DELIMITED_DEFAULT("Gęstość");
-	//LOG_DELIMITED_DEFAULT("Średnia gęstość");
-	//LOG_DELIMITED_DEFAULT("Średnia długość ścieżki");
-	//LOG_DELIMITED_DEFAULT("Współczynnik grupowania");
 
 	LOG("");
 }

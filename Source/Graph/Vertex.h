@@ -12,7 +12,7 @@ public:
 	{
 		for (unsigned int i = 0; i < position.size(); ++i)
 		{
-			position[i] = GraphStatics::getRandomPosition(DEFAULT_MIN_RANGE, DEFAULT_MAX_RANGE);
+			position[i] = GraphStatics::getRandomPosition(DEFAULT_MIN_RANGE, DEFAULT_MAX_RANGE, i);
 		}
 	}
 
@@ -20,7 +20,7 @@ public:
 	{
 		for (unsigned int i = 0; i < position.size(); ++i)
 		{
-			position[i] = GraphStatics::getRandomPosition(minRange, maxRange);
+			position[i] = GraphStatics::getRandomPosition(minRange, maxRange, i);
 		}
 	}
 

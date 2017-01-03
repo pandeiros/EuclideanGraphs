@@ -3,15 +3,21 @@
 #include <cassert>
 #include <cmath>
 
-std::mt19937 GraphStatics::randomNumberGenerator = std::mt19937(std::random_device()());
-std::uniform_real_distribution<double> GraphStatics::distribution = std::uniform_real_distribution<double>(0.f, 1.f);
+std::vector<std::mt19937> GraphStatics::randomNumberGenerators = std::vector<std::mt19937>(DEFAULT_DIMENSIONS, std::mt19937(std::random_device()()));
+std::vector<std::uniform_real_distribution<double>> GraphStatics::distributions = std::vector<std::uniform_real_distribution<double>>();
 
-double GraphStatics::getRandomPosition(const double minRange, const double maxRange)
+double GraphStatics::getRandomPosition(const double minRange, const double maxRange, const unsigned int dimension)
 {
-	if (distribution.a() != minRange || distribution.b() != maxRange)
-		distribution = std::uniform_real_distribution<double>(minRange, maxRange);
+	while (dimension >= distributions.size())
+		distributions.push_back(std::uniform_real_distribution<double>(minRange, maxRange));
 
-	return distribution(randomNumberGenerator);
+	while (dimension >= randomNumberGenerators.size())
+		randomNumberGenerators.push_back(std::mt19937(std::random_device()()));
+
+	if (distributions[dimension].a() != minRange || distributions[dimension].b() != maxRange)
+		distributions[dimension] = std::uniform_real_distribution<double>(minRange, maxRange);
+
+	return distributions[dimension](randomNumberGenerators[dimension]);
 }
 
 unsigned long long GraphStatics::factorial(unsigned long long n)

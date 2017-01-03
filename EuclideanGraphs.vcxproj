@@ -114,12 +114,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graph\AverageGraph.h" />
     <ClInclude Include="Source\Graph\Graph.h" />
     <ClInclude Include="Source\Graph\Vertex.h" />
     <ClInclude Include="Source\Utilities\GraphUtilities.h" />
     <ClInclude Include="Source\Utilities\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graph\AverageGraph.cpp" />
     <ClCompile Include="Source\Graph\Graph.cpp" />
     <ClCompile Include="Source\Graph\Vertex.cpp" />
     <ClCompile Include="Source\Source.cpp" />

@@ -1,4 +1,4 @@
-#include "Graph/Graph.h"
+#include "Graph/AverageGraph.h"
 #include <iostream>
 
 int main()
@@ -6,14 +6,32 @@ int main()
 	Logger::SetOutput(LogOutput::TO_FILE);
 	Logger::SetFilename("dane.txt");
 
-	Graph<2>::logHeaders();
+	AverageGraph<2>::logHeaders();
 
 	// 2-dimensional graph with 50 vertices and 0.5 probability of
 	// edge between any two vertices.
-	Graph<2> graph(50, 0.5);
+	Graph<2> G(50, 0.5);
 
-	// Log properties to output set in Logger.
-	graph.logProperties();
+	for (unsigned int n = 10; n <= 100; n+=10)
+	{
+		for (double ksi = 0.0; ksi < 0.5; ksi += 0.05)
+		{
+			AverageGraph<2> graph(
+			{
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi),
+				Graph<2>(n, ksi)
+			});
+
+			graph.logProperties();
+		}
+	}
 
 	Logger::CloseStream();
 
