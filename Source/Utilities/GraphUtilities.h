@@ -35,7 +35,7 @@ struct ExactProperties
 struct AverageProperties
 {
 	double connectedProbability = 0.0;
-	unsigned int edgeCount = 0;
+	double edgeCount = 0;
 	double expectedValueOfEdgeCount = 0.0;
 	double averageDegree = 0.0;
 	double expectedValueOfDegree = 0.0;

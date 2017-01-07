@@ -42,8 +42,7 @@ AverageGraph<Dimensions>::AverageGraph(const std::vector<Graph<Dimensions>> grap
 
 	for (auto & graph : graphs)
 	{
-		assert(dimensions == graph.getDimensions() &&
-			   n == graph.getVerticesCount() &&
+		assert(n == graph.getVerticesCount() &&
 			   xi == graph.getEdgeProbability());
 
 		averageProperties.connectedProbability += double(graph.getExactProperties().isConnected ? 1 : 0) / graphs.size();

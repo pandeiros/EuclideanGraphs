@@ -51,7 +51,7 @@ void Vertex<Dimensions>::addConnectedVertex(unsigned int index)
 template<unsigned int Dimensions>
 unsigned int Vertex<Dimensions>::getDegree() const
 {
-	return connectedVerticesIndexes.size();
+	return (unsigned)connectedVerticesIndexes.size();
 }
 
 template<unsigned int Dimensions>

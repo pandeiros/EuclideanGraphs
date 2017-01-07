@@ -11,82 +11,107 @@ template<unsigned int Dimensions>
 class Graph
 {
 public:
+	/** Default constructor. */
 	Graph()
-	{
+	{};
 
-	};
+	/** Create graph with specified number of vertices and probability xi. */
+	Graph(const unsigned int vertexCount, const double xi);
 
-	Graph(const unsigned int vertexCount, const double xi)
-		: n(vertexCount), xi(xi)
-	{
-		assert(n > 1);
+	//////////////////////////////////////////////////////////////////////
+	//// Logging
+	//////////////////////////////////////////////////////////////////////
 
-		for (unsigned int i = 0; i < vertexCount; ++i)
-		{
-			vertices.push_back(Vertex<Dimensions>());
-		}
-
-		calculateExactProperties();
-		calculateAppropximateProperties();
-	};
-
-	void printVertices() const;
-	void printProperties() const;
-	void logProperties() const;
+	/** Log readable names of the properties to specified file. */
 	static void logHeaders();
 
-	unsigned int getDimensions() const;
+	/** Log all properties to specified file via Logger. */
+	void logProperties() const;
+
+	//////////////////////////////////////////////////////////////////////
+	//// Getters
+	//////////////////////////////////////////////////////////////////////
+
+	/** Get number of vertices (n). */
 	unsigned int getVerticesCount() const;
+
+	/** Get the probability of edge between two vertices (xi). */
 	double getEdgeProbability() const;
+
+	/** Get the calculated approximate properties of the graph. */
 	ApproximateProperties getApproximateProperties() const;
+
+	/** Get the calculated exact properties of the graph. */
 	ExactProperties getExactProperties() const;
 
 protected:
+	//////////////////////////////////////////////////////////////////////
+	//// Parameters
+	//////////////////////////////////////////////////////////////////////
+
+	/** Number of dimensions in which vertices are defined. */
 	const unsigned int dimensions = Dimensions;
+
+	/** Number of vertices. */
 	unsigned int n = 0;
+
+	/** Probability of edge between every two vertices. */
 	double xi = 0.0;
 
 private:
+	//////////////////////////////////////////////////////////////////////
+	//// Helper methods.
+	//////////////////////////////////////////////////////////////////////
+
+	/** Performs the calculations for the set of exact parameters (i.e. density or average degree). */
 	void calculateExactProperties();
+
+	/** Performs the calculations for the set of approximate parameters (i.e. expected value of degree). */
 	void calculateAppropximateProperties();
+
+	/** Returns true if the graph is connected. */
 	bool checkIfConnected();
+
+	/** Helper function visiting a node (used with checkIfConnected function). */
 	void visitNode(std::vector<unsigned int> & indexes, unsigned int index);
+
+	/**  Breadth-first search function used to calculate path lengths from given vertex to every other vertex. */
 	std::vector<unsigned int> breadthFirstSearch(unsigned int rootIndex);
 
+	//////////////////////////////////////////////////////////////////////
+	//// Properties
+	//////////////////////////////////////////////////////////////////////
+
+	/** Collection of vertices (matching template parameter of the graph). */
 	std::vector<Vertex<Dimensions>> vertices;
+
+	/** Set of approximate parameters of this graph calculated in constructor. */
 	ApproximateProperties approximateProperties;
+
+	/** Set of exact properties of this graph calculated in constructor. */
 	ExactProperties exactProperties;
 };
 
 template<unsigned int Dimensions>
-ExactProperties Graph<Dimensions>::getExactProperties() const
+Graph<Dimensions>::Graph(const unsigned int vertexCount, const double xi)
+	: n(vertexCount), xi(xi)
 {
-	return exactProperties;
-}
+	assert(n > 1);
 
-template<unsigned int Dimensions>
-ApproximateProperties Graph<Dimensions>::getApproximateProperties() const
-{
-	return approximateProperties;
-}
+	// Generate random vertices.
+	for (unsigned int i = 0; i < vertexCount; ++i)
+	{
+		vertices.push_back(Vertex<Dimensions>());
+	}
 
-template<unsigned int Dimensions>
-double Graph<Dimensions>::getEdgeProbability() const
-{
-	return xi;
-}
+	// Calculate properties.
+	calculateExactProperties();
+	calculateAppropximateProperties();
+};
 
-template<unsigned int Dimensions>
-unsigned int Graph<Dimensions>::getVerticesCount() const
-{
-	return n;
-}
-
-template<unsigned int Dimensions>
-unsigned int Graph<Dimensions>::getDimensions() const
-{
-	return dimensions;
-}
+//////////////////////////////////////////////////////////////////////
+//// Logging
+//////////////////////////////////////////////////////////////////////
 
 template<unsigned int Dimensions>
 void Graph<Dimensions>::logHeaders()
@@ -125,6 +150,182 @@ void Graph<Dimensions>::logProperties() const
 	LOG("");
 }
 
+//////////////////////////////////////////////////////////////////////
+//// Getters
+//////////////////////////////////////////////////////////////////////
+
+template<unsigned int Dimensions>
+unsigned int Graph<Dimensions>::getVerticesCount() const
+{
+	return n;
+}
+
+template<unsigned int Dimensions>
+double Graph<Dimensions>::getEdgeProbability() const
+{
+	return xi;
+}
+
+template<unsigned int Dimensions>
+ApproximateProperties Graph<Dimensions>::getApproximateProperties() const
+{
+	return approximateProperties;
+}
+
+template<unsigned int Dimensions>
+ExactProperties Graph<Dimensions>::getExactProperties() const
+{
+	return exactProperties;
+}
+
+//////////////////////////////////////////////////////////////////////
+//// Helper methods
+//////////////////////////////////////////////////////////////////////
+
+template<unsigned int Dimensions>
+void Graph<Dimensions>::calculateExactProperties()
+{
+	// Common constants.
+	double xi2 = std::pow(xi, 2.0);
+	double pi_Xi2 = PI * xi2;
+
+	// If we find vertex with degree 0, the graph is surely disconnected.
+	bool isSurelyDisconnected = false;
+
+	// Prepare properties.
+	unsigned int degreeSum = 0;
+	unsigned int distanceSum = 0;
+	unsigned int vertexGroupingSum = 0;
+	exactProperties.vertexProbability.clear();
+
+	// For each vertex...
+	for (unsigned int i = 0; i < n; ++i)
+	{
+		Vertex<Dimensions> & v = vertices[i];
+
+		// ...get all other vertices...
+		for (unsigned int j = i + 1; j < n; ++j)
+		{
+			Vertex<Dimensions> & w = vertices[j];
+
+			//...check the distance between them and update information about them.
+			double distance = v.getDistanceTo(w);
+			if (distance <= xi)
+			{
+				v.addConnectedVertex(j);
+				w.addConnectedVertex(i);
+				degreeSum += 2;
+				exactProperties.edgeCount += 1;
+			}
+		}
+
+		// Connected graphs have no 0-degree vertices.
+		if (v.getDegree() == 0)
+			isSurelyDisconnected = true;
+
+		// We're checking the probability for every 0 <= k < n (which is the value of 'i' in this case).
+		double probability = GraphStatics::binomialCoefficient(n - 1, i) *
+			std::pow(pi_Xi2, double(i)) *
+			std::pow(1.0 - pi_Xi2, double(n - 1 - i));
+		exactProperties.vertexProbability.push_back(probability);
+
+		// Get all of vertex 'v' neighbors. For every pair of neighbors (nested loops), check if they are connected.
+		// If they are, increment the grouping sum.
+		auto indexes = v.getConnectedVerticesIndexes();
+		for (unsigned int i1 = 0; i1 < indexes.size(); ++i1)
+		{
+			unsigned int index1 = indexes[i1];
+			for (unsigned int i2 = i1 + 1; i2 < indexes.size(); ++i2)
+			{
+				unsigned int index2 = indexes[i2];
+
+				// Neighbor i1 and i2 are connected, if the distance between them is equal or less than xi.
+				if (vertices[index1].getDistanceTo(vertices[index2]) <= xi)
+				{
+					++vertexGroupingSum;
+				}
+			}
+		}
+
+		// Check paths from vertex v to every other vertex (but not the same pair of vertices more than once).
+		auto distances = breadthFirstSearch(i);
+		for (unsigned int dist = i; dist < distances.size(); ++dist)
+		{
+			distanceSum += (distances[dist] != INF ? distances[dist] : 0);
+		}
+
+	}
+
+	// Save the properties from the calculated parameters.
+	exactProperties.averageDegree = (double)degreeSum / n;
+	exactProperties.density = 2.0 * exactProperties.edgeCount / (n * (n - 1));
+	exactProperties.isConnected = isSurelyDisconnected ? false : checkIfConnected();
+	exactProperties.averagePathLength = 2.0 * (double)distanceSum / (n * (n - 1));
+	exactProperties.groupingFactor = (double)vertexGroupingSum / n;
+}
+
+template<unsigned int Dimensions>
+void Graph<Dimensions>::calculateAppropximateProperties()
+{
+	// Common constants.
+	double xi2 = std::pow(xi, 2.0);
+	double pi_Xi2 = PI * xi2;
+
+	// Properties calculated right away.
+	approximateProperties.expectedValueOfDegree = (n - 1) * pi_Xi2;
+	approximateProperties.expectedValueOfEdgeCount = pi_Xi2 * n * (n - 1) / 2.0;
+	approximateProperties.averageDensity = pi_Xi2;
+
+	// Vertex probabilities for every k (0 <= k <= n-1).
+	approximateProperties.vertexProbability.clear();
+	for (unsigned int k = 0; k <= n - 1; ++k)
+	{
+		double probability = std::exp(-1.0 * (n - 1) * pi_Xi2) * std::pow((n - 1) * pi_Xi2, double(k));
+		GraphStatics::divideByFactorial(probability, k);
+		approximateProperties.vertexProbability.push_back(probability);
+	}
+}
+
+template<unsigned int Dimensions>
+bool Graph<Dimensions>::checkIfConnected()
+{
+	// No vertices, graph is disconnected.
+	if (n == 0)
+		return false;
+
+	// Max probable density - surely connected.
+	if (exactProperties.density == 1.0)
+		return true;
+
+	// Visit every vertex and set its value in the vector to 1...
+	std::vector<unsigned int> indexes = std::vector<unsigned int>(vertices.size(), 0);
+	for (unsigned int i = 0; i < indexes.size(); ++i)
+	{
+		if (indexes[i] == 0)
+			visitNode(indexes, i);
+	}
+
+	// ...if at least one vertex has value 0 (has not been visited), the graph is disconnected.
+	for (auto index : indexes)
+	{
+		if (index == 0)
+			return false;
+	}
+
+	return true;
+}
+
+template<unsigned int Dimensions>
+void Graph<Dimensions>::visitNode(std::vector<unsigned int> & indexes, unsigned int index)
+{
+	indexes[index] = 1;
+	for (unsigned int & i : vertices[index].getConnectedVerticesIndexes())
+	{
+		if (indexes[i] == 0)
+			visitNode(indexes, i);
+	}
+}
+
 template<unsigned int Dimensions>
 std::vector<unsigned int> Graph<Dimensions>::breadthFirstSearch(unsigned int rootIndex)
 {
@@ -150,148 +351,3 @@ std::vector<unsigned int> Graph<Dimensions>::breadthFirstSearch(unsigned int roo
 
 	return distances;
 }
-
-template<unsigned int Dimensions>
-void Graph<Dimensions>::visitNode(std::vector<unsigned int> & indexes, unsigned int index)
-{
-	indexes[index] = 1;
-	for (unsigned int & i : vertices[index].getConnectedVerticesIndexes())
-	{
-		if (indexes[i] == 0)
-			visitNode(indexes, i);
-	}
-}
-
-template<unsigned int Dimensions>
-bool Graph<Dimensions>::checkIfConnected()
-{
-	if (n == 0)
-		return false;
-
-	if (exactProperties.density == 1.0)
-		return true;
-
-	std::vector<unsigned int> indexes = std::vector<unsigned int>(vertices.size(), 0);
-	for (unsigned int i = 0; i < indexes.size(); ++i)
-	{
-		if (indexes[i] == 0)
-			visitNode(indexes, i);
-	}
-
-	for (auto index : indexes)
-	{
-		if (index == 0)
-			return false;
-	}
-
-	return true;
-}
-
-template<unsigned int Dimensions>
-void Graph<Dimensions>::printProperties() const
-{
-	exactProperties.printValues();
-	std::cout << "================\n";
-	approximateProperties.printValues();
-}
-
-template<unsigned int Dimensions>
-void Graph<Dimensions>::calculateAppropximateProperties()
-{
-	double xi2 = std::pow(xi, 2.0);
-	double pi_Xi2 = PI * xi2;
-
-	approximateProperties.expectedValueOfDegree = (n - 1) * pi_Xi2;
-	approximateProperties.expectedValueOfEdgeCount = pi_Xi2 * n * (n - 1) / 2.0;
-	approximateProperties.averageDensity = pi_Xi2;
-
-	approximateProperties.vertexProbability.clear();
-	for (unsigned int k = 0; k <= n - 1; ++k)
-	{
-		double probability = std::exp(-1.0 * (n - 1) * pi_Xi2) * std::pow((n - 1) * pi_Xi2, double(k));
-		GraphStatics::divideByFactorial(probability, k);
-		approximateProperties.vertexProbability.push_back(probability);
-	}
-}
-
-template<unsigned int Dimensions>
-void Graph<Dimensions>::calculateExactProperties()
-{
-	double xi2 = std::pow(xi, 2.0);
-	double pi_Xi2 = PI * xi2;
-
-	bool isSurelyDisconnected = false;
-
-	unsigned int degreeSum = 0;
-	unsigned int distanceSum = 0;
-	unsigned int vertexGroupingSum = 0;
-	exactProperties.vertexProbability.clear();
-
-	for (unsigned int i = 0; i < n; ++i)
-	{
-		Vertex<Dimensions> & v = vertices[i];
-		for (unsigned int j = i + 1; j < n; ++j)
-		{
-			Vertex<Dimensions> & w = vertices[j];
-			double distance = v.getDistanceTo(w);
-
-			if (distance <= xi)
-			{
-				v.addConnectedVertex(j);
-				w.addConnectedVertex(i);
-				degreeSum += 2;
-				exactProperties.edgeCount += 1;
-			}
-		}
-
-		if (v.getDegree() == 0)
-			isSurelyDisconnected = true;
-
-		double probability = GraphStatics::binomialCoefficient(n - 1, i) *
-			std::pow(pi_Xi2, double(i)) *
-			std::pow(1.0 - pi_Xi2, double(n - 1 - i));
-		exactProperties.vertexProbability.push_back(probability);
-
-		auto indexes = v.getConnectedVerticesIndexes();
-
-		for (unsigned int i1 = 0; i1 < indexes.size(); ++i1)
-		{
-			unsigned int index1 = indexes[i1];
-			for (unsigned int i2 = i1 + 1; i2 < indexes.size(); ++i2)
-			{
-				unsigned int index2 = indexes[i2];
-				auto & neighbours1 = vertices[index1].getConnectedVerticesIndexes();
-				auto & neighbours2 = vertices[index2].getConnectedVerticesIndexes();
-
-				if (std::find(neighbours1.begin(), neighbours1.end(), index2) != neighbours1.end() &&
-					std::find(neighbours2.begin(), neighbours2.end(), index1) != neighbours2.end())
-				{
-					++vertexGroupingSum;
-				}
-			}
-		}
-
-		auto distances = breadthFirstSearch(i);
-		for (unsigned int dist = i; dist < distances.size(); ++dist)
-		{
-			distanceSum += (distances[dist] != INF ? distances[dist] : 0);
-		}
-
-	}
-
-	exactProperties.averageDegree = (double)degreeSum / n;
-	exactProperties.density = 2.0 * exactProperties.edgeCount / (n * (n - 1));
-	exactProperties.isConnected = isSurelyDisconnected ? false : checkIfConnected();
-	exactProperties.averagePathLength = 2.0 * (double)distanceSum / (n * (n - 1));
-	exactProperties.groupingFactor = (double)vertexGroupingSum / n;
-}
-
-template<unsigned int Dimensions>
-void Graph<Dimensions>::printVertices() const
-{
-	for (auto & vertex : vertices)
-	{
-		LOG(vertex.getPositionAsString());
-	}
-}
-
