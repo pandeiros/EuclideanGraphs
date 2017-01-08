@@ -7,7 +7,7 @@
 #include <numeric>
 #include <cassert>
 
-template<unsigned int Dimensions>
+template<unsigned int Dim>
 class Graph
 {
 public:
@@ -50,7 +50,7 @@ protected:
 	//////////////////////////////////////////////////////////////////////
 
 	/** Number of dimensions in which vertices are defined. */
-	const unsigned int dimensions = Dimensions;
+	const unsigned int dimensions = Dim;
 
 	/** Number of vertices. */
 	unsigned int n = 0;
@@ -83,7 +83,7 @@ private:
 	//////////////////////////////////////////////////////////////////////
 
 	/** Collection of vertices (matching template parameter of the graph). */
-	std::vector<Vertex<Dimensions>> vertices;
+	std::vector<Vertex<Dim>> vertices;
 
 	/** Set of approximate parameters of this graph calculated in constructor. */
 	ApproximateProperties approximateProperties;
@@ -92,8 +92,8 @@ private:
 	ExactProperties exactProperties;
 };
 
-template<unsigned int Dimensions>
-Graph<Dimensions>::Graph(const unsigned int vertexCount, const double xi)
+template<unsigned int Dim>
+Graph<Dim>::Graph(const unsigned int vertexCount, const double xi)
 	: n(vertexCount), xi(xi)
 {
 	assert(n > 1);
@@ -101,7 +101,7 @@ Graph<Dimensions>::Graph(const unsigned int vertexCount, const double xi)
 	// Generate random vertices.
 	for (unsigned int i = 0; i < vertexCount; ++i)
 	{
-		vertices.push_back(Vertex<Dimensions>());
+		vertices.push_back(Vertex<Dim>());
 	}
 
 	// Calculate properties.
@@ -113,8 +113,8 @@ Graph<Dimensions>::Graph(const unsigned int vertexCount, const double xi)
 //// Logging
 //////////////////////////////////////////////////////////////////////
 
-template<unsigned int Dimensions>
-void Graph<Dimensions>::logHeaders()
+template<unsigned int Dim>
+void Graph<Dim>::logHeaders()
 {
 	LOG_DELIMITED_DEFAULT("Dimensions");
 	LOG_DELIMITED_DEFAULT("Vertices");
@@ -132,8 +132,8 @@ void Graph<Dimensions>::logHeaders()
 	LOG("");
 }
 
-template<unsigned int Dimensions>
-void Graph<Dimensions>::logProperties() const
+template<unsigned int Dim>
+void Graph<Dim>::logProperties() const
 {
 	LOG_DELIMITED_DEFAULT(dimensions);
 	LOG_DELIMITED_DEFAULT(n);
@@ -154,26 +154,26 @@ void Graph<Dimensions>::logProperties() const
 //// Getters
 //////////////////////////////////////////////////////////////////////
 
-template<unsigned int Dimensions>
-unsigned int Graph<Dimensions>::getVerticesCount() const
+template<unsigned int Dim>
+unsigned int Graph<Dim>::getVerticesCount() const
 {
 	return n;
 }
 
-template<unsigned int Dimensions>
-double Graph<Dimensions>::getEdgeProbability() const
+template<unsigned int Dim>
+double Graph<Dim>::getEdgeProbability() const
 {
 	return xi;
 }
 
-template<unsigned int Dimensions>
-ApproximateProperties Graph<Dimensions>::getApproximateProperties() const
+template<unsigned int Dim>
+ApproximateProperties Graph<Dim>::getApproximateProperties() const
 {
 	return approximateProperties;
 }
 
-template<unsigned int Dimensions>
-ExactProperties Graph<Dimensions>::getExactProperties() const
+template<unsigned int Dim>
+ExactProperties Graph<Dim>::getExactProperties() const
 {
 	return exactProperties;
 }
@@ -182,8 +182,8 @@ ExactProperties Graph<Dimensions>::getExactProperties() const
 //// Helper methods
 //////////////////////////////////////////////////////////////////////
 
-template<unsigned int Dimensions>
-void Graph<Dimensions>::calculateExactProperties()
+template<unsigned int Dim>
+void Graph<Dim>::calculateExactProperties()
 {
 	// Common constants.
 	double xi2 = std::pow(xi, 2.0);
@@ -201,12 +201,12 @@ void Graph<Dimensions>::calculateExactProperties()
 	// For each vertex...
 	for (unsigned int i = 0; i < n; ++i)
 	{
-		Vertex<Dimensions> & v = vertices[i];
+		Vertex<Dim> & v = vertices[i];
 
 		// ...get all other vertices...
 		for (unsigned int j = i + 1; j < n; ++j)
 		{
-			Vertex<Dimensions> & w = vertices[j];
+			Vertex<Dim> & w = vertices[j];
 
 			//...check the distance between them and update information about them.
 			double distance = v.getDistanceTo(w);
@@ -264,8 +264,8 @@ void Graph<Dimensions>::calculateExactProperties()
 	exactProperties.groupingFactor = (double)vertexGroupingSum / n;
 }
 
-template<unsigned int Dimensions>
-void Graph<Dimensions>::calculateAppropximateProperties()
+template<unsigned int Dim>
+void Graph<Dim>::calculateAppropximateProperties()
 {
 	// Common constants.
 	double xi2 = std::pow(xi, 2.0);
@@ -286,8 +286,8 @@ void Graph<Dimensions>::calculateAppropximateProperties()
 	}
 }
 
-template<unsigned int Dimensions>
-bool Graph<Dimensions>::checkIfConnected()
+template<unsigned int Dim>
+bool Graph<Dim>::checkIfConnected()
 {
 	// No vertices, graph is disconnected.
 	if (n == 0)
@@ -315,8 +315,8 @@ bool Graph<Dimensions>::checkIfConnected()
 	return true;
 }
 
-template<unsigned int Dimensions>
-void Graph<Dimensions>::visitNode(std::vector<unsigned int> & indexes, unsigned int index)
+template<unsigned int Dim>
+void Graph<Dim>::visitNode(std::vector<unsigned int> & indexes, unsigned int index)
 {
 	indexes[index] = 1;
 	for (unsigned int & i : vertices[index].getConnectedVerticesIndexes())
@@ -326,8 +326,8 @@ void Graph<Dimensions>::visitNode(std::vector<unsigned int> & indexes, unsigned 
 	}
 }
 
-template<unsigned int Dimensions>
-std::vector<unsigned int> Graph<Dimensions>::breadthFirstSearch(unsigned int rootIndex)
+template<unsigned int Dim>
+std::vector<unsigned int> Graph<Dim>::breadthFirstSearch(unsigned int rootIndex)
 {
 	std::vector<unsigned int> distances = std::vector<unsigned int>(vertices.size(), INF);
 	std::queue<unsigned int> indexQueue;

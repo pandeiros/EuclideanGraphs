@@ -1,21 +1,54 @@
 ﻿#pragma once
 
 #include "Graph.h"
-template<unsigned int Dimensions>
-class AverageGraph : public Graph<Dimensions>
+template<unsigned int Dim>
+class AverageGraph : public Graph<Dim>
 {
 public:
-	AverageGraph(const std::vector<Graph<Dimensions>> graphs);
+	/** Creates set of average values based on given collection of graphs. */
+	AverageGraph(const std::vector<Graph<Dim>> graphs);
 
+	/** Log readable names of the properties via the logger. */
 	static void logHeaders();
+
+	/** Log all the properties of this graph. */
 	void logProperties() const;
 
 private:
+	/** Set of properties calculated as averages of properties of graphs specified in the constructor. */
 	AverageProperties averageProperties;
 };
 
-template<unsigned int Dimensions>
-void AverageGraph<Dimensions>::logHeaders()
+template<unsigned int Dim>
+AverageGraph<Dim>::AverageGraph(const std::vector<Graph<Dim>> graphs)
+{
+	assert(graphs.size() > 0);
+
+	n = graphs[0].getVerticesCount();
+	xi = graphs[0].getEdgeProbability();
+
+	for (auto & graph : graphs)
+	{
+		// Check that every graph has the same parameters to achieve consistency.
+		assert(n == graph.getVerticesCount() &&
+			xi == graph.getEdgeProbability());
+
+		// Calculate the properties.
+		averageProperties.connectedProbability += double(graph.getExactProperties().isConnected ? 1 : 0) / graphs.size();
+		averageProperties.edgeCount += double(graph.getExactProperties().edgeCount) / graphs.size();
+		averageProperties.expectedValueOfEdgeCount += graph.getApproximateProperties().expectedValueOfEdgeCount / graphs.size();
+		averageProperties.averageDegree += graph.getExactProperties().averageDegree / graphs.size();
+		averageProperties.expectedValueOfDegree += graph.getApproximateProperties().expectedValueOfDegree / graphs.size();
+		averageProperties.density += graph.getExactProperties().density / graphs.size();
+		averageProperties.averageDensity += graph.getApproximateProperties().averageDensity / graphs.size();
+		averageProperties.averagePathLength += graph.getExactProperties().averagePathLength / graphs.size();
+		averageProperties.groupingFactor += graph.getExactProperties().groupingFactor / graphs.size();
+	}
+}
+
+
+template<unsigned int Dim>
+void AverageGraph<Dim>::logHeaders()
 {
 	LOG_DELIMITED_DEFAULT("Dimensions");
 	LOG_DELIMITED_DEFAULT("Vertices");
@@ -33,33 +66,9 @@ void AverageGraph<Dimensions>::logHeaders()
 	LOG("");
 }
 
-template<unsigned int Dimensions>
-AverageGraph<Dimensions>::AverageGraph(const std::vector<Graph<Dimensions>> graphs)
-{
-	assert(graphs.size() > 0);
-	n = graphs[0].getVerticesCount();
-	xi = graphs[0].getEdgeProbability();
 
-	for (auto & graph : graphs)
-	{
-		assert(n == graph.getVerticesCount() &&
-			   xi == graph.getEdgeProbability());
-
-		averageProperties.connectedProbability += double(graph.getExactProperties().isConnected ? 1 : 0) / graphs.size();
-		averageProperties.edgeCount += double(graph.getExactProperties().edgeCount) / graphs.size();
-		averageProperties.expectedValueOfEdgeCount += graph.getApproximateProperties().expectedValueOfEdgeCount / graphs.size();
-		averageProperties.averageDegree += graph.getExactProperties().averageDegree / graphs.size();
-		averageProperties.expectedValueOfDegree += graph.getApproximateProperties().expectedValueOfDegree / graphs.size();
-		averageProperties.density += graph.getExactProperties().density / graphs.size();
-		averageProperties.averageDensity += graph.getApproximateProperties().averageDensity / graphs.size();
-		averageProperties.averagePathLength += graph.getExactProperties().averagePathLength / graphs.size();
-		averageProperties.groupingFactor += graph.getExactProperties().groupingFactor / graphs.size();
-	}
-}
-
-
-template<unsigned int Dimensions>
-void AverageGraph<Dimensions>::logProperties() const
+template<unsigned int Dim>
+void AverageGraph<Dim>::logProperties() const
 {
 	LOG_DELIMITED_DEFAULT(dimensions);
 	LOG_DELIMITED_DEFAULT(n);

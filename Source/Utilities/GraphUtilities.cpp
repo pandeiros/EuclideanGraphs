@@ -64,33 +64,3 @@ void GraphStatics::divideByFactorial(double & value, unsigned int factor)
 		value /= k;
 	}
 }
-
-void ApproximateProperties::printValues() const
-{
-	LOG(expectedValueOfDegree);
-	LOG(expectedValueOfEdgeCount);
-	LOG(averageDensity);
-
-	//for (auto & prob : vertexProbability)
-	//{
-	//	LOG(prob);
-	//}
-}
-
-void ExactProperties::printValues() const
-{
-	LOG(isConnected);
-	LOG(averageDegree);
-	LOG(edgeCount);
-	LOG(density);
-	LOG(averagePathLength);
-	LOG(groupingFactor);
-
-	//for (auto & prob : vertexProbability)
-	//{
-	//	LOG_LINE(prob);
-	//	LOG_LINE(" ");
-	//}
-
-	//LOG("");
-}

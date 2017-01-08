@@ -121,9 +121,6 @@
     <ClInclude Include="Source\Utilities\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Graph\AverageGraph.cpp" />
-    <ClCompile Include="Source\Graph\Graph.cpp" />
-    <ClCompile Include="Source\Graph\Vertex.cpp" />
     <ClCompile Include="Source\Source.cpp" />
     <ClCompile Include="Source\Utilities\GraphUtilities.cpp" />
     <ClCompile Include="Source\Utilities\Utilities.cpp" />

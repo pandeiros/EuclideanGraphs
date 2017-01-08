@@ -4,72 +4,87 @@
 #include <array>
 #include <sstream>
 
-template<unsigned int Dimensions>
+template<unsigned int Dim>
 class Vertex
 {
 public:
-	Vertex()
-	{
-		for (unsigned int i = 0; i < position.size(); ++i)
-		{
-			position[i] = GraphStatics::getRandomPosition(DEFAULT_MIN_RANGE, DEFAULT_MAX_RANGE, i);
-		}
-	}
+	/** Default constructor, create positions for default range. */
+	Vertex();
 
-	Vertex(const double minRange, const double maxRange)
-	{
-		for (unsigned int i = 0; i < position.size(); ++i)
-		{
-			position[i] = GraphStatics::getRandomPosition(minRange, maxRange, i);
-		}
-	}
+	/** Creates positions for specified range. */
+	Vertex(const double minRange, const double maxRange);
 
-	double getAxisValue(unsigned int index) const;
-	std::string getPositionAsString() const;
-	double getDistanceTo(Vertex<Dimensions> & other) const;
+	/** Add new connected vertex to this vertex (via its index) */
 	void addConnectedVertex(unsigned int index);
+
+	//////////////////////////////////////////////////////////////////////
+	//// Getters
+	//////////////////////////////////////////////////////////////////////
+
+	/** Return position value for specified axis. */
+	double getAxisValue(unsigned int axis) const;
+
+	/** Return the euclidean distance between this and other vertex. */
+	double getDistanceTo(Vertex<Dim> & other) const;
+
+	/** Returns number of connected vertices with this vertex. */
 	unsigned int getDegree() const;
+
+	/** Return collection of indexes of vertices connected to this vertex. */
 	std::vector<unsigned int> getConnectedVerticesIndexes() const;
 
 private:
-	std::array<double, Dimensions> position;
+	/** Array of values describing vertex position in 'Dim' dimensions. */
+	std::array<double, Dim> position;
+
+	/** Indexes of connected vertices. */
 	std::vector<unsigned int> connectedVerticesIndexes;
 };
 
-template<unsigned int Dimensions>
-std::vector<unsigned int> Vertex<Dimensions>::getConnectedVerticesIndexes() const
+template<unsigned int Dim>
+Vertex<Dim>::Vertex()
 {
-	return connectedVerticesIndexes;
+	for (unsigned int i = 0; i < position.size(); ++i)
+	{
+		position[i] = GraphStatics::getRandomPosition(DEFAULT_MIN_RANGE, DEFAULT_MAX_RANGE, i);
+	}
 }
 
-template<unsigned int Dimensions>
-void Vertex<Dimensions>::addConnectedVertex(unsigned int index)
+template<unsigned int Dim>
+Vertex<Dim>::Vertex(const double minRange, const double maxRange)
+{
+	for (unsigned int i = 0; i < position.size(); ++i)
+	{
+		position[i] = GraphStatics::getRandomPosition(minRange, maxRange, i);
+	}
+}
+
+template<unsigned int Dim>
+void Vertex<Dim>::addConnectedVertex(unsigned int index)
 {
 	connectedVerticesIndexes.push_back(index);
 }
 
-template<unsigned int Dimensions>
-unsigned int Vertex<Dimensions>::getDegree() const
-{
-	return (unsigned)connectedVerticesIndexes.size();
-}
+//////////////////////////////////////////////////////////////////////
+//// Getters
+//////////////////////////////////////////////////////////////////////
 
-template<unsigned int Dimensions>
-double Vertex<Dimensions>::getAxisValue(unsigned int index) const
+template<unsigned int Dim>
+double Vertex<Dim>::getAxisValue(unsigned int axis) const
 {
-	if (index < Dimensions)
+	if (axis < Dim)
 	{
-		return position[index];
+		return position[axis];
 	}
 
 	return 0.0;
 }
 
-template<unsigned int Dimensions>
-double Vertex<Dimensions>::getDistanceTo(Vertex<Dimensions> & other) const
+template<unsigned int Dim>
+double Vertex<Dim>::getDistanceTo(Vertex<Dim> & other) const
 {
 	double distance = 0.0;
-	for (unsigned int i = 0; i < Dimensions; ++i)
+	for (unsigned int i = 0; i < Dim; ++i)
 	{
 		distance += std::pow((other.getAxisValue(i) - position[i]), 2.0);
 	}
@@ -77,24 +92,14 @@ double Vertex<Dimensions>::getDistanceTo(Vertex<Dimensions> & other) const
 	return std::sqrt(distance);
 }
 
-template<unsigned int Dimensions>
-std::string Vertex<Dimensions>::getPositionAsString() const
+template<unsigned int Dim>
+unsigned int Vertex<Dim>::getDegree() const
 {
-	if (position.size() < 1)
-	{
-		LOG("Vertex position is empty!");
-	}
-
-	std::stringstream ss;
-	ss << "(";
-
-	for (unsigned int i = 0; i < position.size() - 1; ++i)
-	{
-		ss << position[i] << ", ";
-	}
-
-	ss << position[position.size() - 1] << ")";
-
-	return ss.str();
+	return (unsigned)connectedVerticesIndexes.size();
 }
 
+template<unsigned int Dim>
+std::vector<unsigned int> Vertex<Dim>::getConnectedVerticesIndexes() const
+{
+	return connectedVerticesIndexes;
+}
