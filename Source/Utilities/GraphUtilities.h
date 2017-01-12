@@ -26,7 +26,7 @@ struct ApproximateProperties
 struct ExactProperties
 {
 	double averageDegree;
-	unsigned int edgeCount;
+    unsigned int edgeCount = 0;
 	double density;
 	double averagePathLength;
 	double groupingFactor;
