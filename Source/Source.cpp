@@ -10,39 +10,23 @@ int main()
     Logger::SetFilename("dane.txt");
     AverageGraph<DIMS>::logHeaders();
 
-    const unsigned int testSets = 25;
+    const unsigned int testSets = 20;
 
     // Generate graphs.
-    //for (unsigned int n = 10; n <= 300; n += 10)
-    //{
-    //	for (double xi = 0.02; xi <= 0.5; xi += 0.02)
-    //	{
-    //		// For each pair of n and xi, create <testSets> graphs and calculate average values.
-    //		std::vector<Graph<DIMS>> graphs;
-    //		for (unsigned i = 0; i < testSets; ++i)
-    //		{
-    //			graphs.push_back(Graph<DIMS>(n, xi));
-    //		}
-
-    //		AverageGraph<DIMS> graph(graphs);
-    //		graph.logProperties();
-    //	}
-    //}
-
-    for (unsigned int n = 10; n <= 100; n += 10)
+    for (unsigned int n = 10; n <= 300; n += 10)
     {
-        for (double xi = 0.05; xi <= 0.5; xi += 0.05)
-        {
-            // For each pair of n and xi, create <testSets> graphs and calculate average values.
-            std::vector<Graph<DIMS>> graphs;
-            for (unsigned i = 0; i < testSets; ++i)
-            {
-                graphs.push_back(Graph<DIMS>(n, xi));
-            }
+    	for (double xi = 0.02; xi <= 0.501; xi += 0.02)
+    	{
+    		// For each pair of n and xi, create <testSets> graphs and calculate average values.
+    		std::vector<Graph<DIMS>> graphs;
+    		for (unsigned i = 0; i < testSets; ++i)
+    		{
+    			graphs.push_back(Graph<DIMS>(n, xi));
+    		}
 
-            AverageGraph<DIMS> graph(graphs);
-            graph.logProperties();
-        }
+    		AverageGraph<DIMS> graph(graphs);
+    		graph.logProperties();
+    	}
     }
 
     Logger::CloseStream();

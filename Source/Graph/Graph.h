@@ -257,8 +257,17 @@ void Graph<Dim>::calculateExactProperties()
 
         // Add difference between approximate and exact probability.
         double probabilityDiff = probability - approximateProperties.vertexProbability[i];
-        vertexProbabilityDiff.push_back(probabilityDiff);
-        exactProperties.averageVertexProbability += probabilityDiff;
+        if (!std::isnan(probabilityDiff) && std::isfinite(probabilityDiff))
+        {
+            vertexProbabilityDiff.push_back(probabilityDiff);
+            exactProperties.averageVertexProbability += probabilityDiff;
+        }
+        else
+        {
+            double lastValue = vertexProbabilityDiff[vertexProbabilityDiff.size() - 1];
+            vertexProbabilityDiff.push_back(lastValue);
+            exactProperties.averageVertexProbability += lastValue;
+        }
     }
 
     // Save the properties from the calculated parameters.
