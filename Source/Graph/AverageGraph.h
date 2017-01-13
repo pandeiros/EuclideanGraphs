@@ -43,6 +43,10 @@ AverageGraph<Dim>::AverageGraph(const std::vector<Graph<Dim>> graphs)
 		averageProperties.averageDensity += graph.getApproximateProperties().averageDensity / graphs.size();
 		averageProperties.averagePathLength += graph.getExactProperties().averagePathLength / graphs.size();
 		averageProperties.groupingFactor += graph.getExactProperties().groupingFactor / graphs.size();
+		averageProperties.degreeVariance += graph.getExactProperties().degreeVariance / graphs.size();
+		averageProperties.normalizedDegreeVariance += graph.getExactProperties().normalizedDegreeVariance / graphs.size();
+		averageProperties.averageVertexProbability += graph.getExactProperties().averageVertexProbability / graphs.size();
+		averageProperties.vertexProbabilityVariance += graph.getExactProperties().vertexProbabilityVariance / graphs.size();
 	}
 }
 
@@ -62,6 +66,10 @@ void AverageGraph<Dim>::logHeaders()
 	LOG_DELIMITED_DEFAULT("Average density");
 	LOG_DELIMITED_DEFAULT("Average path length");
 	LOG_DELIMITED_DEFAULT("Grouping factor");
+	LOG_DELIMITED_DEFAULT("Degree variance");
+	LOG_DELIMITED_DEFAULT("Normalized degree variance");
+	LOG_DELIMITED_DEFAULT("Average difference of vertex probability");
+	LOG_DELIMITED_DEFAULT("Vertex probability difference variance");
 
 	LOG("");
 }
@@ -82,6 +90,10 @@ void AverageGraph<Dim>::logProperties() const
 	LOG_DELIMITED_DEFAULT(averageProperties.averageDensity);
 	LOG_DELIMITED_DEFAULT(averageProperties.averagePathLength);
 	LOG_DELIMITED_DEFAULT(averageProperties.groupingFactor);
+	LOG_DELIMITED_DEFAULT(averageProperties.degreeVariance);
+	LOG_DELIMITED_DEFAULT(averageProperties.normalizedDegreeVariance);
+	LOG_DELIMITED_DEFAULT(averageProperties.averageVertexProbability);
+	LOG_DELIMITED_DEFAULT(averageProperties.vertexProbabilityVariance);
 
 	LOG("");
 }

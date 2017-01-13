@@ -14,9 +14,9 @@
  */
 struct ApproximateProperties
 {
-    double expectedValueOfDegree;
-    double expectedValueOfEdgeCount;
-    double averageDensity;
+    double expectedValueOfDegree = 0.0;
+    double expectedValueOfEdgeCount = 0.0;
+    double averageDensity = 0.0;
     std::vector<double> vertexProbability;
 };
 
@@ -25,13 +25,17 @@ struct ApproximateProperties
  */
 struct ExactProperties
 {
-    double averageDegree;
+    double averageDegree = 0.0;
     unsigned int edgeCount = 0;
-    double density;
-    double averagePathLength;
-    double groupingFactor;
+    double density = 0.0;
+    double averagePathLength = 0.0;
+    double groupingFactor = 0.0;
     std::vector<double> vertexProbability;
-    bool isConnected;
+    bool isConnected = false;
+    double degreeVariance = 0.0;
+    double normalizedDegreeVariance = 0.0;
+    double averageVertexProbability = 0.0;
+    double vertexProbabilityVariance = 0.0;
 };
 
 /**
@@ -49,6 +53,10 @@ struct AverageProperties
     double averageDensity = 0.0;
     double averagePathLength = 0.0;
     double groupingFactor = 0.0;
+    double degreeVariance = 0.0;
+    double normalizedDegreeVariance = 0.0;
+    double averageVertexProbability = 0.0;
+    double vertexProbabilityVariance = 0.0;
 };
 
 /**
