@@ -14,10 +14,10 @@
  */
 struct ApproximateProperties
 {
-	double expectedValueOfDegree;
-	double expectedValueOfEdgeCount;
-	double averageDensity;
-	std::vector<double> vertexProbability;
+    double expectedValueOfDegree;
+    double expectedValueOfEdgeCount;
+    double averageDensity;
+    std::vector<double> vertexProbability;
 };
 
 /**
@@ -25,13 +25,13 @@ struct ApproximateProperties
  */
 struct ExactProperties
 {
-	double averageDegree;
+    double averageDegree;
     unsigned int edgeCount = 0;
-	double density;
-	double averagePathLength;
-	double groupingFactor;
-	std::vector<double> vertexProbability;
-	bool isConnected;
+    double density;
+    double averagePathLength;
+    double groupingFactor;
+    std::vector<double> vertexProbability;
+    bool isConnected;
 };
 
 /**
@@ -40,15 +40,15 @@ struct ExactProperties
  */
 struct AverageProperties
 {
-	double connectedProbability = 0.0;
-	double edgeCount = 0;
-	double expectedValueOfEdgeCount = 0.0;
-	double averageDegree = 0.0;
-	double expectedValueOfDegree = 0.0;
-	double density = 0.0;
-	double averageDensity = 0.0;
-	double averagePathLength = 0.0;
-	double groupingFactor = 0.0;
+    double connectedProbability = 0.0;
+    double edgeCount = 0;
+    double expectedValueOfEdgeCount = 0.0;
+    double averageDegree = 0.0;
+    double expectedValueOfDegree = 0.0;
+    double density = 0.0;
+    double averageDensity = 0.0;
+    double averagePathLength = 0.0;
+    double groupingFactor = 0.0;
 };
 
 /**
@@ -57,14 +57,14 @@ struct AverageProperties
 class GraphStatics
 {
 public:
-	static double getRandomPosition(const double minRange, const double maxRange, const unsigned int dimension);
-	static unsigned long long factorial(unsigned long long n);
-	static unsigned int binomialCoefficient(unsigned int n, unsigned int k);
-	static unsigned int min(unsigned int a, unsigned int b);
-	static void divideByFactorial(double & value, unsigned int factor);
+    static double getRandomPosition(const double minRange, const double maxRange, const unsigned int dimension);
+    static unsigned long long factorial(unsigned long long n);
+    static unsigned int binomialCoefficient(unsigned int n, unsigned int k);
+    static unsigned int min(unsigned int a, unsigned int b);
+    static void divideByFactorial(double & value, unsigned int factor);
 
 private:
-	/** Variable used to uniformly distribute vertices positions. Each dimension is calculated separately.*/
-	static std::vector<std::mt19937> randomNumberGenerators;
-	static std::vector<std::uniform_real_distribution<double>> distributions;
+    /** Variable used to uniformly distribute vertices positions. Each dimension is calculated separately.*/
+    static std::vector<std::mt19937> randomNumberGenerators;
+    static std::vector<std::uniform_real_distribution<double>> distributions;
 };
