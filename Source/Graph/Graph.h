@@ -195,7 +195,7 @@ void Graph<Dim>::calculateExactProperties()
     // Prepare properties.
     unsigned int degreeSum = 0;
     unsigned int distanceSum = 0;
-    unsigned int vertexGroupingSum = 0;
+    double vertexGroupingSum = 0;
     exactProperties.vertexProbability.clear();
     std::vector<double> vertexProbabilityDiff;
 
@@ -233,6 +233,7 @@ void Graph<Dim>::calculateExactProperties()
         // Get all of vertex 'v' neighbors. For every pair of neighbors (nested loops), check if they are connected.
         // If they are, increment the grouping sum.
         auto indexes = v.getConnectedVerticesIndexes();
+        double vertexGroupingFactor = 0.0;
         for (unsigned int i1 = 0; i1 < indexes.size(); ++i1)
         {
             unsigned int index1 = indexes[i1];
@@ -243,10 +244,16 @@ void Graph<Dim>::calculateExactProperties()
                 // Neighbor i1 and i2 are connected, if the distance between them is equal or less than xi.
                 if (vertices[index1].getDistanceTo(vertices[index2]) <= xi)
                 {
-                    ++vertexGroupingSum;
+                    vertexGroupingFactor += 1.0;
                 }
             }
         }
+        if (v.getDegree() > 1)
+        {
+            vertexGroupingFactor *= 2.0 / v.getDegree() / (v.getDegree() - 1);
+        }
+
+        vertexGroupingSum += vertexGroupingFactor;
 
         // Check paths from vertex v to every other vertex (but not the same pair of vertices more than once).
         auto distances = breadthFirstSearch(i);
@@ -275,7 +282,7 @@ void Graph<Dim>::calculateExactProperties()
     exactProperties.density = 2.0 * exactProperties.edgeCount / (n * (n - 1));
     exactProperties.isConnected = isSurelyDisconnected ? false : checkIfConnected();
     exactProperties.averagePathLength = 2.0 * (double)distanceSum / (n * (n - 1));
-    exactProperties.groupingFactor = (double)vertexGroupingSum / n;
+    exactProperties.groupingFactor = vertexGroupingSum / n;
     exactProperties.degreeVariance = pi_Xi2 * (1.0 - xi2) * (n - 1.0);
 
     // Calculate normalized degree value and variance of differences between exact and approximate vertex probabilities.

@@ -31,7 +31,6 @@ unsigned int GraphStatics::binomialCoefficient(unsigned int n, unsigned int k)
 
 	std::vector<std::vector<unsigned int>> C = std::vector<std::vector<unsigned int>>(n + 1, std::vector<unsigned int>(k + 1, 0));
 
-	//unsigned int C[n + 1][k + 1];
 	unsigned int i, j;
 
 	// Calculate value of Binomial Coefficient in bottom up manner
